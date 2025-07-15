@@ -14,8 +14,8 @@ export const Navbar = () => {
     <>
       <nav className="navbar navbar-expand-lg" style={{ backgroundColor: "#ffcc00" }}>
         <div className="container-fluid">
-          <a className="navbar-brand me-3" href="#">
-            <img src={Logo} alt="APIculturaArias Logo" className="navbar-logo" />
+          <a className="navbar-brand me-3" href="/">
+            <img src={Logo} alt="APIculturaArias Logo" className="navbar-logo" href="#"/>
           </a>
 
           <button
