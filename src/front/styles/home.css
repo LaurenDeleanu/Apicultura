@@ -1,7 +1,72 @@
-/*
-    home.css: This website contains selectors only used in home.css
+body {
+  background-color: #212529; /* negro oscuro tipo bg-dark de Bootstrap */
+  color: #fff; /* para que el texto se vea claro en fondo oscuro */
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  font-family: Arial, sans-serif; /* o la que uses */
+}
+.invert-image {
+  filter: invert(100%);
+}
 
-    All pages share the styles on index.css but you should create 
-    one more css for each page that will contain the selected used 
-    on that page only (the ones not reused in other pages).
-*/
+/*navbar*/
+.navbar-logo {
+  height: 45px;
+  width: auto;
+  object-fit: contain;
+}
+
+.custom-hover:hover {
+  color: #808080 !important;
+  text-decoration: none;
+}
+
+.custom-dropdown:hover .dropdown-menu {
+  display: block;
+  margin-top: 0;
+}
+
+.custom-dropdown .dropdown-menu {
+  background-color: #000;
+  color: #fff;
+  border: none;
+}
+
+.custom-dropdown .dropdown-item {
+  color: #fff;
+}
+
+.custom-dropdown .dropdown-item:hover {
+  background-color: #333;
+  color: #fff;
+}
+
+.form-control:focus {
+  border-color: #000 !important;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.4) !important;
+  outline: none;
+  transition: box-shadow 0.3s ease;
+}
+
+.navbar-user:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.custom-white-separator {
+  width: auto;
+  border: none;
+  height: 3px;
+  background-color: white;
+  margin-top: 5px;
+  margin-bottom: 0;
+}
+
+/*inicio sesion*/
+
+.navbar-logo-sesion {
+  height: 80px;
+  width: auto;
+  object-fit: contain;
+}
