@@ -3,70 +3,52 @@
 Script de gestión de usuarios para el sistema de apicultura
 """
 
-import sys
-import os
+import getpass
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash
-import getpass
+from models import Usuario, db  # Asegúrate que models.py está en el mismo directorio
 
-# Configuración básica
+# Configuración básica para standalone (si no usas app.py con create_app)
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'tu-clave-secreta-muy-segura-para-apicultura'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///apicultura.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-db = SQLAlchemy(app)
-
-# Importar modelo de usuario (asumiendo que está en el mismo directorio)
-class Usuario(db.Model):
-    __tablename__ = 'usuarios'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    password_hash = db.Column(db.String(128), nullable=False)
-    nombre = db.Column(db.String(100), nullable=False)
-    apellido = db.Column(db.String(100), nullable=False)
-    rol = db.Column(db.String(50), default='apicultor')
-    activo = db.Column(db.Boolean, default=True)
-    fecha_creacion = db.Column(db.DateTime, default=db.func.current_timestamp())
-    ultimo_login = db.Column(db.DateTime)
-    
-    def set_password(self, password):
-        self.password_hash = generate_password_hash(password)
+db.init_app(app)
 
 def crear_usuario():
     """Crear un nuevo usuario"""
     print("=== Crear Nuevo Usuario ===")
-    
+
     email = input("Email: ").strip().lower()
     nombre = input("Nombre: ").strip()
     apellido = input("Apellido: ").strip()
-    
+
     print("Roles disponibles: admin, apicultor, inspector")
     rol = input("Rol [apicultor]: ").strip() or 'apicultor'
-    
+
     password = getpass.getpass("Contraseña: ")
     password_confirm = getpass.getpass("Confirmar contraseña: ")
-    
+
     if password != password_confirm:
         print("❌ Las contraseñas no coinciden")
         return
-    
+
     # Verificar si el usuario ya existe
     if Usuario.query.filter_by(email=email).first():
         print(f"❌ Ya existe un usuario con el email: {email}")
         return
-    
+
     # Crear usuario
     usuario = Usuario(
-        NombreUsuario=Usuario,
+        email=email,
         nombre=nombre,
         apellido=apellido,
         rol=rol
     )
     usuario.set_password(password)
-    
+
     try:
         db.session.add(usuario)
         db.session.commit()
@@ -78,37 +60,37 @@ def crear_usuario():
 def listar_usuarios():
     """Listar todos los usuarios"""
     print("=== Lista de Usuarios ===")
-    
+
     usuarios = Usuario.query.all()
-    
+
     if not usuarios:
         print("No hay usuarios registrados")
         return
-    
+
     print(f"{'ID':<5} {'Email':<30} {'Nombre':<20} {'Rol':<12} {'Activo':<8}")
     print("-" * 75)
-    
+
     for usuario in usuarios:
         print(f"{usuario.id:<5} {usuario.email:<30} {usuario.nombre:<20} {usuario.rol:<12} {'Sí' if usuario.activo else 'No':<8}")
 
 def cambiar_password():
     """Cambiar contraseña de un usuario"""
     print("=== Cambiar Contraseña ===")
-    
+
     email = input("Email del usuario: ").strip().lower()
     usuario = Usuario.query.filter_by(email=email).first()
-    
+
     if not usuario:
         print(f"❌ Usuario no encontrado: {email}")
         return
-    
+
     nueva_password = getpass.getpass("Nueva contraseña: ")
     confirmar_password = getpass.getpass("Confirmar contraseña: ")
-    
+
     if nueva_password != confirmar_password:
         print("❌ Las contraseñas no coinciden")
         return
-    
+
     try:
         usuario.set_password(nueva_password)
         db.session.commit()
@@ -120,23 +102,23 @@ def cambiar_password():
 def activar_desactivar_usuario():
     """Activar o desactivar un usuario"""
     print("=== Activar/Desactivar Usuario ===")
-    
+
     email = input("Email del usuario: ").strip().lower()
     usuario = Usuario.query.filter_by(email=email).first()
-    
+
     if not usuario:
         print(f"❌ Usuario no encontrado: {email}")
         return
-    
+
     estado_actual = "activo" if usuario.activo else "inactivo"
     print(f"Estado actual: {estado_actual}")
-    
+
     nuevo_estado = input("Nuevo estado (activo/inactivo): ").strip().lower()
-    
+
     if nuevo_estado not in ['activo', 'inactivo']:
         print("❌ Estado inválido. Use 'activo' o 'inactivo'")
         return
-    
+
     try:
         usuario.activo = nuevo_estado == 'activo'
         db.session.commit()
@@ -148,20 +130,20 @@ def activar_desactivar_usuario():
 def eliminar_usuario():
     """Eliminar un usuario"""
     print("=== Eliminar Usuario ===")
-    
+
     email = input("Email del usuario: ").strip().lower()
     usuario = Usuario.query.filter_by(email=email).first()
-    
+
     if not usuario:
         print(f"❌ Usuario no encontrado: {email}")
         return
-    
+
     confirmacion = input(f"¿Está seguro de eliminar el usuario {email}? (sí/no): ").strip().lower()
-    
+
     if confirmacion not in ['sí', 'si', 'yes', 'y']:
         print("❌ Operación cancelada")
         return
-    
+
     try:
         db.session.delete(usuario)
         db.session.commit()
@@ -180,9 +162,9 @@ def menu_principal():
         print("4. Activar/Desactivar usuario")
         print("5. Eliminar usuario")
         print("6. Salir")
-        
+
         opcion = input("\nSeleccione una opción: ").strip()
-        
+
         if opcion == '1':
             crear_usuario()
         elif opcion == '2':
