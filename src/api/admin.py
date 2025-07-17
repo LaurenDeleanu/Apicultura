@@ -7,7 +7,7 @@ import getpass
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash
-from models import Usuario, db  # Asegúrate que models.py está en el mismo directorio
+from api.models import Usuario, db  # Asegúrate que models.py está en el mismo directorio
 
 # Configuración básica para standalone (si no usas app.py con create_app)
 app = Flask(__name__)
