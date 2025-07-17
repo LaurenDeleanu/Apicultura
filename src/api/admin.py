@@ -185,3 +185,42 @@ if __name__ == '__main__':
     with app.app_context():
         db.create_all()
         menu_principal()
+
+def setup_admin(app):
+    """Configurar comandos administrativos para la aplicación"""
+    
+    @app.cli.command()
+    def create_user():
+        """Crear un nuevo usuario (CLI)"""
+        with app.app_context():
+            crear_usuario()
+    
+    @app.cli.command()
+    def list_users():
+        """Listar todos los usuarios (CLI)"""
+        with app.app_context():
+            listar_usuarios()
+    
+    @app.cli.command()
+    def change_password():
+        """Cambiar contraseña de usuario (CLI)"""
+        with app.app_context():
+            cambiar_password()
+    
+    @app.cli.command()
+    def toggle_user():
+        """Activar/desactivar usuario (CLI)"""
+        with app.app_context():
+            activar_desactivar_usuario()
+    
+    @app.cli.command()
+    def delete_user():
+        """Eliminar usuario (CLI)"""
+        with app.app_context():
+            eliminar_usuario()
+    
+    @app.cli.command()
+    def admin_menu():
+        """Abrir menú administrativo interactivo"""
+        with app.app_context():
+            menu_principal()
