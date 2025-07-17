@@ -1,8 +1,8 @@
 from flask import Blueprint, request, jsonify
 from functools import wraps
-from .models import Usuario
-from .utils import validar_email, validar_password
-from .models import db
+from models import Usuario
+from utils import validar_email, validar_password
+from models import db
 import jwt
 import datetime
 from flask import current_app as app
