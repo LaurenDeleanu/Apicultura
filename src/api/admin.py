@@ -2,32 +2,17 @@
 """
 Script de gestión de usuarios para el sistema de apicultura
 """
-
 import getpass
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from werkzeug.security import generate_password_hash
-from api.models import Usuario, db  # Asegúrate que models.py está en el mismo directorio
-
-# Configuración básica para standalone (si no usas app.py con create_app)
-app = Flask(__name__)
-app.config['SECRET_KEY'] = 'tu-clave-secreta-muy-segura-para-apicultura'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///apicultura.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-db.init_app(app)
+from api.models import Usuario, db
 
 def crear_usuario():
     """Crear un nuevo usuario"""
     print("=== Crear Nuevo Usuario ===")
-
     email = input("Email: ").strip().lower()
     nombre = input("Nombre: ").strip()
     apellido = input("Apellido: ").strip()
-
     print("Roles disponibles: admin, apicultor, inspector")
     rol = input("Rol [apicultor]: ").strip() or 'apicultor'
-
     password = getpass.getpass("Contraseña: ")
     password_confirm = getpass.getpass("Confirmar contraseña: ")
 
@@ -35,12 +20,10 @@ def crear_usuario():
         print("❌ Las contraseñas no coinciden")
         return
 
-    # Verificar si el usuario ya existe
     if Usuario.query.filter_by(email=email).first():
         print(f"❌ Ya existe un usuario con el email: {email}")
         return
 
-    # Crear usuario
     usuario = Usuario(
         email=email,
         nombre=nombre,
@@ -60,7 +43,6 @@ def crear_usuario():
 def listar_usuarios():
     """Listar todos los usuarios"""
     print("=== Lista de Usuarios ===")
-
     usuarios = Usuario.query.all()
 
     if not usuarios:
@@ -76,7 +58,6 @@ def listar_usuarios():
 def cambiar_password():
     """Cambiar contraseña de un usuario"""
     print("=== Cambiar Contraseña ===")
-
     email = input("Email del usuario: ").strip().lower()
     usuario = Usuario.query.filter_by(email=email).first()
 
@@ -102,7 +83,6 @@ def cambiar_password():
 def activar_desactivar_usuario():
     """Activar o desactivar un usuario"""
     print("=== Activar/Desactivar Usuario ===")
-
     email = input("Email del usuario: ").strip().lower()
     usuario = Usuario.query.filter_by(email=email).first()
 
@@ -112,7 +92,6 @@ def activar_desactivar_usuario():
 
     estado_actual = "activo" if usuario.activo else "inactivo"
     print(f"Estado actual: {estado_actual}")
-
     nuevo_estado = input("Nuevo estado (activo/inactivo): ").strip().lower()
 
     if nuevo_estado not in ['activo', 'inactivo']:
@@ -130,7 +109,6 @@ def activar_desactivar_usuario():
 def eliminar_usuario():
     """Eliminar un usuario"""
     print("=== Eliminar Usuario ===")
-
     email = input("Email del usuario: ").strip().lower()
     usuario = Usuario.query.filter_by(email=email).first()
 
@@ -139,7 +117,6 @@ def eliminar_usuario():
         return
 
     confirmacion = input(f"¿Está seguro de eliminar el usuario {email}? (sí/no): ").strip().lower()
-
     if confirmacion not in ['sí', 'si', 'yes', 'y']:
         print("❌ Operación cancelada")
         return
@@ -181,44 +158,38 @@ def menu_principal():
         else:
             print("❌ Opción inválida")
 
-if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-        menu_principal()
-
 def setup_admin(app):
     """Configurar comandos administrativos para la aplicación"""
-    
     @app.cli.command()
     def create_user():
         """Crear un nuevo usuario (CLI)"""
         with app.app_context():
             crear_usuario()
-    
+
     @app.cli.command()
     def list_users():
         """Listar todos los usuarios (CLI)"""
         with app.app_context():
             listar_usuarios()
-    
+
     @app.cli.command()
     def change_password():
         """Cambiar contraseña de usuario (CLI)"""
         with app.app_context():
             cambiar_password()
-    
+
     @app.cli.command()
     def toggle_user():
         """Activar/desactivar usuario (CLI)"""
         with app.app_context():
             activar_desactivar_usuario()
-    
+
     @app.cli.command()
     def delete_user():
         """Eliminar usuario (CLI)"""
         with app.app_context():
             eliminar_usuario()
-    
+
     @app.cli.command()
     def admin_menu():
         """Abrir menú administrativo interactivo"""
