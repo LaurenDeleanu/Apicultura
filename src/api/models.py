@@ -15,5 +15,19 @@ class User(db.Model):
         return {
             "id": self.id,
             "email": self.email,
-            # do not serialize the password, its a security breach
+        }
+    
+class Humeador(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    fecha = db.Column(db.Integer, unique=True, nullable=False)
+    tipo = db.Column(db.String(80), nullable=False)
+
+    def __repr__(self):
+        return f'<Humeador {self.id}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "fecha": self.fecha,
+            "tipo": self.tipo,
         }
