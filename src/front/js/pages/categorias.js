@@ -4,10 +4,9 @@ import rigoImageUrl from "../../img/rigo-baby.jpg";
 import { Card } from "../component/Card";
 import { Cardcol } from "../component/Cardcol";
 import { Cardtraj } from "../component/Cardtraj";
-import { Cardot } from "../component/Cardot";
 import "../../styles/home.css";
 
-export const Home = () => {
+export const Categorias = () => {
 	const { store, actions } = useContext(Context);
 
 	return (
@@ -16,7 +15,6 @@ export const Home = () => {
 			<Card />
 			<Cardcol />
 			<Cardtraj />
-			<Cardot />
 			</div>
 		</div>
 	);
